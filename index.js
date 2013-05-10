@@ -25,8 +25,8 @@ Spy.prototype._stub = function(obj,meth,fn){
     stub(obj,meth,this,fn);  // calls passed block (fn)
   } finally {
     delete this[meth];
-    return this;
   }
+  return this;
 }
 
 Spy.prototype._watch = function(obj, meth){
@@ -36,7 +36,7 @@ Spy.prototype._watch = function(obj, meth){
     payload.arguments = [].slice.call(arguments,0);
     this.callIds.push(callId++);
     try {
-      payload.returnValue = ret = obj[meth];
+      payload.returnValue = ret = obj[meth].apply(obj,arguments);
     } catch (e) {
       payload.exception = e;
       throw e;
@@ -67,6 +67,14 @@ Spy.prototype.calledExactly = function(n){
 
 Spy.prototype.calledOnce = function(){
   return this.calledExactly(1);
+}
+
+Spy.prototype.firstCall = function(){
+  return this._calls[0];
+}
+
+Spy.prototype.lastCall = function(){
+  return this._calls[this._calls.length-1];
 }
 
 Spy.prototype.calledWithExactly = function(){
