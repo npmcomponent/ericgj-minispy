@@ -11,7 +11,7 @@ function spyCalledTests(method) {
         },
 
         "returns false if spy was not called": function () {
-            assert.notEqual(true, this.spy[method](1, 2, 3));
+            assert.notEqual( this.spy[method](1, 2, 3), true);
         },
 
         "returns true if spy was called with args": function () {
@@ -33,7 +33,7 @@ function spyCalledTests(method) {
             this.spy.watch(2);
             this.spy.watch();
 
-            assert.notEqual(true,this.spy[method](1, 2, 3), JSON.stringify(this.spy));
+            assert.notEqual(this.spy[method](1, 2, 3), true);
         },
 
         "returns true for partial match": function () {
@@ -47,7 +47,7 @@ function spyCalledTests(method) {
         "matchs all arguments individually, not as array": function () {
             this.spy.watch([1, 2, 3]);
 
-            assert.notEqual(true, this.spy[method](1, 2, 3));
+            assert.notEqual( this.spy[method](1, 2, 3), true);
         }
         
     /* not implemented
@@ -67,10 +67,67 @@ function spyCalledTests(method) {
     };
 }
 
+function spyAlwaysCalledTests(method) {
+    return {
+        beforeEach: function () {
+            this.spy = Spy();
+        },
+
+        "returns false if spy was not called": function () {
+            assert.notEqual(this.spy[method](1, 2, 3), true);
+        },
+
+        "returns true if spy was called with args": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert(this.spy[method](1, 2, 3));
+        },
+
+        "returns false if called with args only once": function () {
+            this.spy.watch(1, 3, 3);
+            this.spy.watch(1, 2, 3);
+            this.spy.watch(3, 2, 3);
+
+            assert.notEqual( this.spy[method](1, 2, 3), true);
+        },
+
+        "returns false if not called with args": function () {
+            this.spy.watch(1, 3, 3);
+            this.spy.watch(2);
+            this.spy.watch();
+
+            assert.notEqual( this.spy[method](1, 2, 3), true);
+        },
+
+        "returns true for partial match": function () {
+            this.spy.watch(1, 3, 3);
+
+            assert(this.spy[method](1, 3));
+        },
+
+        "returns true for partial match on many calls": function () {
+            this.spy.watch(1, 3, 3);
+            this.spy.watch(1, 3);
+            this.spy.watch(1, 3, 4, 5);
+            this.spy.watch(1, 3, 1);
+
+            assert(this.spy[method](1, 3));
+        },
+
+        "matchs all arguments individually, not as array": function () {
+            this.spy.watch([1, 2, 3]);
+
+            assert.notEqual(this.spy[method](1, 2, 3), true);
+        }
+    };
+}
+
+
 
 module.exports = {
     
-    "calledWith": spyCalledTests("calledWith")
+    "calledWith": spyCalledTests("calledWith"),
+    "alwaysCalledWith": spyAlwaysCalledTests("alwaysCalledWith")
     
 }
 

@@ -88,7 +88,20 @@ Spy.prototype.calledWithExactly = function(){
 
 Spy.prototype.calledWith = function(){
   var args = [].slice.call(arguments,0);
+  if (!this.called()) return false;
   return this.calls().any(function(act){
+    if (act.arguments.length == 0) return (args.length == 0);
+    for (var i=0;i<args.length;++i){
+      if (!deepEqual(act.arguments[i],args[i])) return false;
+    }
+    return true;
+  });
+}
+
+Spy.prototype.alwaysCalledWith = function(){
+  var args = [].slice.call(arguments,0);
+  if (!this.called()) return false;
+  return this.calls().all(function(act){
     if (act.arguments.length == 0) return (args.length == 0);
     for (var i=0;i<args.length;++i){
       if (!deepEqual(act.arguments[i],args[i])) return false;
