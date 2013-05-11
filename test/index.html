@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <script src="../build/build.js"></script>
+    <script src="./spy.js"></script>
+    <link rel="stylesheet" href="../build/build.css" />
+    <script>
+
+var assert = require('timoxley-assert')
+require('visionmedia-mocha');
+
+mocha.setup('exports');
+
+<!-- note mocha doesn't work in browser with exports mode -->
+<!-- so all tests are run in node, for now                -->
+
+    </script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script>
+      mocha.run(require.modules['test/spy.js']);
+    </script>
+  </body>
+</html>

@@ -1,6 +1,10 @@
-// var stub = require('ministub')
-var Enum = require('enumerable-component')
-  , noop = function(){}
+var Enum;
+try {
+  Enum = require('enumerable');            // component require
+} catch(e) {
+  Enum = require('enumerable-component');  // npm require fallback
+}
+var noop = function(){}
 
 var callId = 0;
 
@@ -187,6 +191,7 @@ function deepEqual(a, b) {
 
   return aLength == bLength;
 }
+
 
 // temporarily inlined until ministub released to npm
 
