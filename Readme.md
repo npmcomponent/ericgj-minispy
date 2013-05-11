@@ -1,7 +1,8 @@
 
 # minispy
 
-  Simple test spy utilities, framework agnostic
+  Simple test spy utilities, framework agnostic.
+  Inspection API similar to [sinon.js][a].
 
 ## Installation
 
@@ -9,23 +10,25 @@
 
 ## Example
 
-  ```javascript
-  /* To use a spy itself as a simple callback function: */
+###  To use a spy itself as a simple callback function
 
+  ```javascript
   var spy = Spy();
   someFunctionWithCallback("parameter", spy.watch);
   assert(spy.called());
+  ```
 
+###  To inject a spy into a callback function 
 
-  /* To inject a spy into a callback function: */
-
+  ```javascript
   var spy = Spy(callback);
   someFunctionWithCallback("parameter", spy.watch);
   assert.equal(spy.lastCall().returnValue, 1);
+  ```
 
+###  To inject a spy into a method call on an existing object
 
-  /* To inject a spy into a method call on an existing object: */
-
+  ```javascript
   var spy = Spy(obj)
   spy.stub("method", function(){
     obj.method();
@@ -35,8 +38,9 @@
 
 ## API
 
-  The API for inspecting spy results is similar to [sinon.js][a]'.
-
+  The API for inspecting spy results is similar to [sinon.js][a],
+  except using methods instead of properties (e.g. `spy.called()` vs 
+  `spy.called`.
 
 
 ## License
