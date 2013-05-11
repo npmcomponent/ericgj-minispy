@@ -1,52 +1,46 @@
 var stub = require('ministub')
   , Enum = require('enumerable)
+  , noop = function(){}
 
 var callId = 0;
 
 module.exports = Spy;
 
-function Spy(obj,meth,fn){
-  if (!(this instanceof Spy)) return new Spy(obj,meth);
+function Spy(fn){
+  if (!(this instanceof Spy)) return new Spy(fn);
   this._calls = [];
   this.callIds = [];
-  if (obj && meth) {
-    this._stub(obj,meth,fn);
-  }
+  this.fn = fn;
   return this;
 }
 
 Spy.prototype.watch = function(){
-  this._watch({},'').bind(this);
+  var ret, payload = {};
+  payload.arguments = [].slice.call(arguments,0);
+  this.callIds.push(callId++);
+  try {
+    payload.returnValue = ret = this.fn.apply(this.fn,arguments);
+  } catch (e) {
+    payload.exception = e;
+    throw e;
+  } finally {
+    this._calls.push(payload);
+  }
+  return ret;
 }
 
-Spy.prototype._stub = function(obj,meth,fn){
-  this[meth] = this._watch(obj, meth).bind(this);
-  try { 
-    stub(obj,meth,this,fn);  // calls passed block (fn)
+Spy.prototype.stub = function(meth,block){
+  var obj = this.fn;
+  this.fn = this.fn[meth];
+  this[meth] = this.watch;
+  try {
+    stub(obj,meth,this,block);
   } finally {
     delete this[meth];
   }
   return this;
 }
 
-Spy.prototype._watch = function(obj, meth){
-  return function() {
-    var ret
-    , payload = {};
-    payload.arguments = [].slice.call(arguments,0);
-    this.callIds.push(callId++);
-    try {
-      payload.returnValue = ret = obj[meth].apply(obj,arguments);
-    } catch (e) {
-      payload.exception = e;
-      throw e;
-    } finally {
-      this._calls.push(payload);
-    }
-
-    return ret;
-  }
-}
 
 Spy.prototype.calls = function(){
   return Enumerable(this._calls);
@@ -75,6 +69,10 @@ Spy.prototype.firstCall = function(){
 
 Spy.prototype.lastCall = function(){
   return this._calls[this._calls.length-1];
+}
+
+Spy.prototype.getCall = function(i){
+  return this._calls[i];
 }
 
 Spy.prototype.calledWithExactly = function(){
