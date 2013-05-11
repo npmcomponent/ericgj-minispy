@@ -1,5 +1,5 @@
-var stub = require('ministub')
-  , Enum = require('enumerable)
+// var stub = require('ministub')
+var Enum = require('enumerable-component')
   , noop = function(){}
 
 var callId = 0;
@@ -10,20 +10,20 @@ function Spy(fn){
   if (!(this instanceof Spy)) return new Spy(fn);
   this._calls = [];
   this.callIds = [];
-  this.fn = fn;
+  this.fn = fn || noop;
   return this;
 }
 
 Spy.prototype.watch = function(){
   var ret, payload = {};
   payload.arguments = [].slice.call(arguments,0);
-  this.callIds.push(callId++);
   try {
     payload.returnValue = ret = this.fn.apply(this.fn,arguments);
   } catch (e) {
     payload.exception = e;
     throw e;
   } finally {
+    this.callIds.push(callId++);
     this._calls.push(payload);
   }
   return ret;
@@ -43,7 +43,7 @@ Spy.prototype.stub = function(meth,block){
 
 
 Spy.prototype.calls = function(){
-  return Enumerable(this._calls);
+  return Enum(this._calls);
 }
 
 Spy.prototype.callCount = function(){
@@ -77,19 +77,20 @@ Spy.prototype.getCall = function(i){
 
 Spy.prototype.calledWithExactly = function(){
   var args = [].slice.call(arguments,0);
-  this.calls().any(function(act){
+  return this.calls().any(function(act){
     return deepEqual(act.arguments, args);
-  }
+  });
 }
 
 Spy.prototype.calledWith = function(){
   var args = [].slice.call(arguments,0);
-  this.calls().any(function(act){
-    for (var i=0;i<act.arguments.length;++i){
-      if (!deepEqual(act[i],args[i]) return false;
+  return this.calls().any(function(act){
+    if (act.arguments.length == 0) return (args.length == 0);
+    for (var i=0;i<args.length;++i){
+      if (!deepEqual(act.arguments[i],args[i])) return false;
     }
     return true;
-  }
+  });
 }
 
 Spy.prototype.calledBefore = function(other){
@@ -185,4 +186,26 @@ function deepEqual(a, b) {
   }
 
   return aLength == bLength;
+}
+
+// temporarily inlined until ministub released to npm
+
+var stub = function(obj, name, val_or_fn, fn){
+  try {
+    var newName = "__ministub__" + name;
+    obj[newName] = obj[name];
+    obj[name] = function(){
+      if (typeof val_or_fn == 'function') {
+        return val_or_fn.apply(this, arguments);
+      } else {
+        return val_or_fn;
+      }
+    };
+
+    return fn(obj);
+
+  } finally {
+    obj[name] = obj[newName];
+    delete obj[newName];
+  }
 }
