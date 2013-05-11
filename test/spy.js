@@ -11,7 +11,7 @@ function spyCalledTests(method) {
         },
 
         "returns false if spy was not called": function () {
-            assert.notEqual( this.spy[method](1, 2, 3), true);
+            assert.equal( this.spy[method](1, 2, 3), false);
         },
 
         "returns true if spy was called with args": function () {
@@ -33,7 +33,7 @@ function spyCalledTests(method) {
             this.spy.watch(2);
             this.spy.watch();
 
-            assert.notEqual(this.spy[method](1, 2, 3), true);
+            assert.equal(this.spy[method](1, 2, 3), false);
         },
 
         "returns true for partial match": function () {
@@ -47,7 +47,7 @@ function spyCalledTests(method) {
         "matchs all arguments individually, not as array": function () {
             this.spy.watch([1, 2, 3]);
 
-            assert.notEqual( this.spy[method](1, 2, 3), true);
+            assert.equal( this.spy[method](1, 2, 3), false);
         }
         
     /* not implemented
@@ -74,7 +74,7 @@ function spyAlwaysCalledTests(method) {
         },
 
         "returns false if spy was not called": function () {
-            assert.notEqual(this.spy[method](1, 2, 3), true);
+            assert.equal(this.spy[method](1, 2, 3), false);
         },
 
         "returns true if spy was called with args": function () {
@@ -88,7 +88,7 @@ function spyAlwaysCalledTests(method) {
             this.spy.watch(1, 2, 3);
             this.spy.watch(3, 2, 3);
 
-            assert.notEqual( this.spy[method](1, 2, 3), true);
+            assert.equal( this.spy[method](1, 2, 3), false);
         },
 
         "returns false if not called with args": function () {
@@ -96,7 +96,7 @@ function spyAlwaysCalledTests(method) {
             this.spy.watch(2);
             this.spy.watch();
 
-            assert.notEqual( this.spy[method](1, 2, 3), true);
+            assert.equal( this.spy[method](1, 2, 3), false);
         },
 
         "returns true for partial match": function () {
@@ -117,21 +117,65 @@ function spyAlwaysCalledTests(method) {
         "matchs all arguments individually, not as array": function () {
             this.spy.watch([1, 2, 3]);
 
-            assert.notEqual(this.spy[method](1, 2, 3), true);
+            assert.equal(this.spy[method](1, 2, 3), false);
         }
     };
 }
 
-function spyNeverCalledTests(method) {  /* todo */ }
+function spyNeverCalledTests(method) { 
+    return {
+        beforeEach: function () {
+            this.spy = Spy();
+        },
 
+        "returns true if spy was not called": function () {
+            assert(this.spy[method](1, 2, 3));
+        },
+
+        "returns false if spy was called with args": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert.equal(this.spy[method](1, 2, 3), false);
+        },
+
+        "returns false if called with args at least once": function () {
+            this.spy.watch(1, 3, 3);
+            this.spy.watch(1, 2, 3);
+            this.spy.watch(3, 2, 3);
+
+            assert.equal(this.spy[method](1, 2, 3), false);
+        },
+
+        "returns true if not called with args": function () {
+            this.spy.watch(1, 3, 3);
+            this.spy.watch(2);
+            this.spy.watch();
+
+            assert(this.spy[method](1, 2, 3));
+        },
+
+        "returns false for partial match": function () {
+            this.spy.watch(1, 3, 3);
+            this.spy.watch(2);
+            this.spy.watch();
+
+            assert.equal(this.spy[method](1, 3), false);
+        },
+
+        "matchs all arguments individually, not as array": function () {
+            this.spy.watch([1, 2, 3]);
+
+            assert(this.spy[method](1, 2, 3));
+        }
+    };
+}
 
 
 
 module.exports = {
     
-    "calledWith": spyCalledTests("calledWith"),
-    "alwaysCalledWith": spyAlwaysCalledTests("alwaysCalledWith"),
-    
+  /* Note sinon.js internal tests omitted here */
+        
     "call": {
         "calls underlying function": function () {
             var called = false;
@@ -241,6 +285,414 @@ module.exports = {
       */
       
     },    
+    
+    "called": {
+        forEach: function () {
+            this.spy = Spy();
+        },
+
+        "is false prior to calling the spy": function () {
+            assert.equal(this.spy.called(), false);
+        },
+
+        "is true after calling the spy once": function () {
+            this.spy.watch();
+
+            assert(this.spy.called());
+        },
+
+        "is true after calling the spy twice": function () {
+            this.spy.watch();
+            this.spy.watch();
+
+            assert(this.spy.called());
+        }
+    },
+    
+    "notCalled": {
+        forEach: function () {
+            this.spy = Spy();
+        },
+
+        "is true prior to calling the spy": function () {
+            assert.equal(this.spy.notCalled(), true);
+        },
+
+        "is false after calling the spy once": function () {
+            this.spy.watch();
+
+            assert.equal(this.spy.notCalled(), false);
+        }
+    },
+
+    "calledOnce": {
+        beforeEach: function () {
+            this.spy = Spy();
+        },
+
+        "is false prior to calling the spy": function () {
+            assert.equal(this.spy.calledOnce(), false);
+        },
+
+        "is true after calling the spy once": function () {
+            this.spy.watch();
+
+            assert(this.spy.calledOnce());
+        },
+
+        "is false after calling the spy twice": function () {
+            this.spy.watch();
+            this.spy.watch();
+
+            assert.equal(this.spy.calledOnce(), false);
+        }
+    },
+    
+  /* calledTwice, calledThrice omitted */
+    
+    "callCount": {
+        beforeEach: function () {
+            this.spy = Spy();
+        },
+
+        "reports 0 calls": function () {
+            assert.equal(this.spy.callCount(), 0);
+        },
+
+        "records one call": function () {
+            this.spy.watch();
+
+            assert.equal(this.spy.callCount(), 1);
+        },
+
+        "records two calls": function () {
+            this.spy.watch();
+            this.spy.watch();
+
+            assert.equal(this.spy.callCount(), 2);
+        },
+
+        "increases call count for each call": function () {
+            this.spy.watch();
+            this.spy.watch();
+            assert.equal(this.spy.callCount(), 2);
+
+            this.spy.watch();
+            assert.equal(this.spy.callCount(), 3);
+        }
+    },
+    
+  /* calledOn, alwaysCalledOn, calledWithNew, alwaysCalledWithNew, thisValue omitted */
+    
+    "calledWith": spyCalledTests("calledWith"),
+    
+  /* calledWithMatch, calledWithMatchSpecial omitted */
+    
+    "alwaysCalledWith": spyAlwaysCalledTests("alwaysCalledWith"),
+
+  /* alwaysCalledWithMatch, alwaysCalledWithMatchSpecial omitted */
+    
+    "neverCalledWith": spyNeverCalledTests("neverCalledWith"),
+
+  /* neverCalledWithMatch, neverCalledWithMatchSpecial omitted */
+    
+  /* args omitted */
+  
+    "calledWithExactly": {
+        beforeEach: function () {
+            this.spy = Spy();
+        },
+
+        "returns false for partial match": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert.equal(this.spy.calledWithExactly(1, 2), false);
+        },
+
+        "returns false for missing arguments": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert.equal(this.spy.calledWithExactly(1, 2, 3, 4), false);
+        },
+
+        "returns true for exact match": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert(this.spy.calledWithExactly(1, 2, 3));
+        },
+
+        "matchs by strict comparison": function () {
+            this.spy.watch({}, []);
+
+            assert.equal(this.spy.calledWithExactly({}, [], null), false);
+        },
+
+        "returns true for one exact match": function () {
+            var object = {};
+            var array = [];
+            this.spy.watch({}, []);
+            this.spy.watch(object, []);
+            this.spy.watch(object, array);
+
+            assert(this.spy.calledWithExactly(object, array));
+        }
+    },
+        
+    "alwaysCalledWithExactly": {
+        beforeEach: function () {
+            this.spy = Spy();
+        },
+
+        "returns false for partial match": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert.equal(this.spy.alwaysCalledWithExactly(1, 2), false);
+        },
+
+        "returns false for missing arguments": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert.equal(this.spy.alwaysCalledWithExactly(1, 2, 3, 4), false);
+        },
+
+        "returns true for exact match": function () {
+            this.spy.watch(1, 2, 3);
+
+            assert(this.spy.alwaysCalledWithExactly(1, 2, 3));
+        },
+
+        "returns false for excess arguments": function () {
+            this.spy.watch({}, []);
+
+            assert.equal(this.spy.alwaysCalledWithExactly({}, [], null), false);
+        },
+
+        "returns false for one exact match": function () {
+            var object = {};
+            var array = [];
+            this.spy.watch({}, []);
+            this.spy.watch(object, []);
+            this.spy.watch(object, array);
+
+            assert(this.spy.alwaysCalledWithExactly(object, array));
+        },
+
+        "returns true for only exact matches": function () {
+            var object = {};
+            var array = [];
+
+            this.spy.watch(object, array);
+            this.spy.watch(object, array);
+            this.spy.watch(object, array);
+
+            assert(this.spy.alwaysCalledWithExactly(object, array));
+        },
+
+        "returns false for no exact matches": function () {
+            var object = {};
+            var array = [];
+
+            this.spy.watch(object, array, null);
+            this.spy.watch(object, array, undefined);
+            this.spy.watch(object, array, "");
+
+            assert.equal(this.spy.alwaysCalledWithExactly(object, array), false);
+        }
+        
+    },
+    
+  /* threw, alwaysThrew, exceptions omitted */
+  
+  /* returned, returnValues omitted */
+  
+    "calledBefore": {
+        beforeEach: function () {
+            this.spy1 = Spy();
+            this.spy2 = Spy();
+        },
+
+      /* not needed
+        "is function": function () {
+            assert.equal(typeof this.spy1.calledBefore, "function");
+        },
+      */
+
+        "returns true if first call to A was before first to B": function () {
+            this.spy1.watch();
+            this.spy2.watch();
+
+            assert(this.spy1.calledBefore(this.spy2));
+        },
+
+      /* N/A
+        "compares call order of calls directly": function () {
+            this.spy1.watch();
+            this.spy2.watch();
+
+            assert(this.spy1.getCall(0).calledBefore(this.spy2.getCall(0)));
+        },
+      */
+
+        "returns false if not called": function () {
+            this.spy2.watch();
+
+            assert.equal(this.spy1.calledBefore(this.spy2), false);
+        },
+
+        "returns true if other not called": function () {
+            this.spy1.watch();
+
+            assert(this.spy1.calledBefore(this.spy2));
+        },
+
+        "returns false if other called first": function () {
+            this.spy2.watch();
+            this.spy1.watch();
+            this.spy2.watch();
+
+            assert(this.spy1.calledBefore(this.spy2));
+        }
+    },
+    
+    "calledAfter": {
+        beforeEach: function () {
+            this.spy1 = Spy();
+            this.spy2 = Spy();
+        },
+
+      /* not needed
+        "is function": function () {
+            assert.isFunction(this.spy1.calledAfter);
+        },
+      */
+
+        "returns true if first call to A was after first to B": function () {
+            this.spy2.watch();
+            this.spy1.watch();
+
+            assert(this.spy1.calledAfter(this.spy2));
+        },
+
+      /* N/A
+        "compares calls directly": function () {
+            this.spy2.watch();
+            this.spy1.watch();
+
+            assert(this.spy1.getCall(0).calledAfter(this.spy2.getCall(0)));
+        },
+      */
+
+        "returns false if not called": function () {
+            this.spy2.watch();
+
+            assert.equal(this.spy1.calledAfter(this.spy2), false);
+        },
+
+        "returns false if other not called": function () {
+            this.spy1.watch();
+
+            assert.equal(this.spy1.calledAfter(this.spy2), false);
+        },
+
+        "returns false if other called last": function () {
+            this.spy2.watch();
+            this.spy1.watch();
+            this.spy2.watch();
+
+            assert.equal(this.spy1.calledAfter(this.spy2), false);
+        }
+    },
+    
+    "firstCall": {
+        "is undefined by default": function () {
+            var spy = Spy();
+
+            assert.equal(spy.firstCall(), undefined);
+        },
+
+        "is equal to getCall(0) result after first call": function () {
+            var spy = Spy();
+
+            spy.watch();
+
+            var call0 = spy.getCall(0);
+            assert.deepEqual(spy.firstCall(), call0);
+        }
+
+    },
+    
+  /* secondCall, thirdCall omitted */
+  
+    "lastCall": {
+        "is undefined by default": function () {
+            var spy = Spy();
+
+            assert.equal(spy.lastCall(), undefined);
+        },
+
+        "is same as firstCall after first call": function () {
+            var spy = Spy();
+
+            spy.watch();
+
+            assert.deepEqual(spy.lastCall(), spy.firstCall());
+        },
+
+      /* not needed
+      
+        "is same as secondCall after second call": function () {
+            var spy = sinon.spy();
+
+            spy();
+            spy();
+
+            assert.same(spy.lastCall.callId, spy.secondCall.callId);
+            assert.same(spy.lastCall.spy, spy.secondCall.spy);
+        },
+
+        "is same as thirdCall after third call": function () {
+            var spy = sinon.spy();
+
+            spy();
+            spy();
+            spy();
+
+            assert.same(spy.lastCall.callId, spy.thirdCall.callId);
+            assert.same(spy.lastCall.spy, spy.thirdCall.spy);
+        },
+
+      */
+      
+        "is equal to getCall(3) result after fourth call": function () {
+            var spy = Spy();
+
+            spy.watch();
+            spy.watch();
+            spy.watch();
+            spy.watch();
+
+            var call3 = spy.getCall(3);
+            assert.deepEqual(spy.lastCall(), call3);
+        },
+
+        "is equal to getCall(4) result after fifth call": function () {
+            var spy = Spy();
+
+            spy.watch();
+            spy.watch();
+            spy.watch();
+            spy.watch();
+            spy.watch();
+
+            var call4 = spy.getCall(4);
+            assert.deepEqual(spy.lastCall(), call4);
+        }
+    },
+    
+  /* callArgWith, callArgOnWith omitted */
+  
+  /* yield, yieldOn, yieldTo omitted */
+  
     
 }
 

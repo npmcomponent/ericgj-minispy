@@ -59,6 +59,10 @@ Spy.prototype.called = function(n){
   return this._calls.length >= n;
 }
 
+Spy.prototype.notCalled = function(n){
+  return !this.called(n);
+}
+
 Spy.prototype.calledExactly = function(n){
   return this._calls.length == n;
 }
@@ -82,6 +86,13 @@ Spy.prototype.getCall = function(i){
 Spy.prototype.calledWithExactly = function(){
   var args = [].slice.call(arguments,0);
   return this.calls().any(function(act){
+    return deepEqual(act.arguments, args);
+  });
+}
+
+Spy.prototype.alwaysCalledWithExactly = function(){
+  var args = [].slice.call(arguments,0);
+  return this.calls().all(function(act){
     return deepEqual(act.arguments, args);
   });
 }
@@ -110,6 +121,10 @@ Spy.prototype.alwaysCalledWith = function(){
   });
 }
 
+Spy.prototype.neverCalledWith = function(){
+  return !this.calledWith.apply(this,arguments);
+}
+
 Spy.prototype.calledBefore = function(other){
   if (!this.called()) return false;
   if (!other.called()) return true;
@@ -128,6 +143,8 @@ Spy.prototype.calledAfter = function(other){
 // private
 
 // utilities borrowed from sinon.js for deepEqual
+
+var div = typeof document != "undefined" && document.createElement('div');
 
 function isDOMNode(obj) {
   var success = false;
