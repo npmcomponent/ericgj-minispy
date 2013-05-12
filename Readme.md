@@ -60,8 +60,8 @@
   - neverCalledWith(args...)
   - threw({null|String|Object})
   - alwaysThrew({null|String|Object})
-  - _returned({Object})_
-  - _alwaysReturned({Object})_
+  - returned({Object})
+  - alwaysReturned({Object})
   - calledBefore({Spy})
   - calledAfter({Spy})
 

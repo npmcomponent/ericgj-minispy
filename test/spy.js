@@ -680,9 +680,91 @@ module.exports = {
             assert(this.spyWithTypeError.alwaysThrew("TypeError"));
         }
     },
+      
+    "returned": {
+        "returns true when no argument": function () {
+            var spy = Spy();
+            spy.watch();
+
+            assert(spy.returned());
+        },
+
+        "returns true for undefined when no explicit return": function () {
+            var spy = Spy();
+            spy.watch();
+
+            assert(spy.returned(undefined));
+        },
+
+        "returns true when returned value once": function () {
+            var values = [{}, 2, "hey", function () {}];
+            var spy = Spy(function () {
+                return values[spy.callCount()];
+            });
+
+            spy.watch();
+            spy.watch();
+            spy.watch();
+            spy.watch();
+
+            assert(spy.returned(values[3]));
+        },
+
+        "returns false when value is never returned": function () {
+            var values = [{}, 2, "hey", function () {}];
+            var spy = Spy(function () {
+                return values[spy.callCount];
+            });
+
+            spy.watch();
+            spy.watch();
+            spy.watch();
+            spy.watch();
+
+            assert.equal(spy.returned({ id: 42 }), false);
+        },
+
+        "returns true when value is returned several times": function () {
+            var object = { id: 42 };
+            var spy = Spy(function () {
+                return object;
+            });
+
+            spy.watch();
+            spy.watch();
+            spy.watch();
+
+            assert(spy.returned(object));
+        },
+
+        "compares values deeply": function () {
+            var object = { deep: { id: 42 } };
+            var spy = Spy(function () {
+                return object;
+            });
+
+            spy.watch();
+
+            assert(spy.returned({ deep: { id: 42 } }));
+        }
+
+      /* not implemented
+        "compares values strictly using match.same": function () {
+            var object = { id: 42 };
+            var spy = Spy(function () {
+                return object;
+            });
+
+            spy.watch();
+
+            assert.isFalse(spy.returned(sinon.match.same({ id: 42 })));
+            assert(spy.returned(sinon.match.same(object)));
+        }
+      */
+    },
     
-  /* returned, returnValues omitted */
-  
+  /* returnValues omitted */
+    
     "calledBefore": {
         beforeEach: function () {
             this.spy1 = Spy();

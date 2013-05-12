@@ -34,13 +34,16 @@ Spy.prototype.watch = function(){
 }
 
 Spy.prototype.stub = function(meth,block){
-  var obj = this.fn;
+  var obj = this.fn
+    , meth = this[meth]
   this.fn = this.fn[meth];
   this[meth] = this.watch;
   try {
     stub(obj,meth,this,block);
   } finally {
     delete this[meth];
+    this[meth] = meth;
+    this.fn = obj;
   }
   return this;
 }
@@ -147,6 +150,18 @@ Spy.prototype.alwaysThrew = function(err){
       return deepEqual(c.exception, err);
     });
   }
+}
+
+Spy.prototype.returned = function(ret){
+  return this.calls().any(function(c){
+    return deepEqual(c.returnValue, ret);
+  });
+}
+
+Spy.prototype.alwaysReturned = function(ret){
+  return this.calls().all(function(c){
+    return deepEqual(c.returnValue, ret);
+  });
 }
 
 Spy.prototype.calledBefore = function(other){
