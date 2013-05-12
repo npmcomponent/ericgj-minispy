@@ -693,6 +693,24 @@ module.exports = {
   
   /* yield, yieldOn, yieldTo omitted */
   
+  
+  
+  
+  
+  /* tests below this point are added to sinon.js tests */
+  
+    "calls chaining": function () {
+      var f = function(x) { return x * x; }
+      var spy = Spy(f);
+      
+      for (var i=0; i<5; ++i){
+        spy.watch(i);
+      }
+      
+      var actual = spy.calls().select('arguments[0] % 2 == 0').map('returnValue');
+      assert.equal(JSON.stringify(actual), JSON.stringify([0,4,16]));
+    }
+    
     
 }
 
