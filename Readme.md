@@ -36,7 +36,7 @@
   ```
 
 Note that `stub` does not _pass through_ the method call but _intercepts_ it. 
-It thus acts more like a classical mock than a spy.
+The injected spy thus acts more like a classical mock.
 
 
 ###  To wrap a method call on an existing object with a spy
