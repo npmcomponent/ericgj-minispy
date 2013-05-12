@@ -19,7 +19,7 @@
     "spy",
     "spies"
   ],
-  "author": "Eric Gjertsen",
+  "author": "Eric Gjertsen <ericgj72@gmail.com> (https://github.com/ericgj)",
   "license": "MIT",
   "dependencies": {
     "enumerable-component": "*"

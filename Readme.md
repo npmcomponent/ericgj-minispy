@@ -6,7 +6,14 @@
 
 ## Installation
 
+### Component
+
     $ component install ericgj/minispy
+
+### Node.js
+
+    $ npm install minispy
+
 
 ## Examples
 
