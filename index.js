@@ -33,21 +33,23 @@ Spy.prototype.watch = function(){
   return ret;
 }
 
-Spy.prototype.stub = function(meth,block){
-  var obj = this.fn
-    , meth = this[meth]
-  this.fn = this.fn[meth];
-  this[meth] = this.watch;
-  try {
-    stub(obj,meth,this,block);
+Spy.wrap = function(obj,meth,block){
+  var orig = obj[meth]; 
+  var spy = new Spy(orig);
+  try { 
+    obj[meth] = spy.watch.bind(spy);
+    block.call();
   } finally {
-    delete this[meth];
-    this[meth] = meth;
-    this.fn = obj;
+    obj[meth] = orig;
   }
-  return this;
+  return spy;
 }
 
+Spy.stub = function(obj,meth,block){
+  var spy = new Spy();
+  stub(obj,meth,spy.watch.bind(spy),block);
+  return spy;
+}
 
 Spy.prototype.calls = function(){
   return Enum(this._calls);
@@ -270,7 +272,7 @@ var stub = function(obj, name, val_or_fn, fn){
     obj[newName] = obj[name];
     obj[name] = function(){
       if (typeof val_or_fn == 'function') {
-        return val_or_fn.apply(this, arguments);
+        return val_or_fn.apply(val_or_fn, arguments);
       } else {
         return val_or_fn;
       }

@@ -18,7 +18,7 @@
   assert(spy.called());
   ```
 
-###  To inject a spy into a callback function 
+###  To wrap a callback function with a spy
 
   ```javascript
   var spy = Spy(callback);
@@ -26,15 +26,27 @@
   assert.equal(spy.lastCall().returnValue, callback());
   ```
 
-###  To inject a spy into a method call on an existing object
+###  To stub a method call on an existing object with a spy
 
   ```javascript
-  var spy = Spy(obj)
-  spy.stub("method", function(){
+  var spy = Spy.stub(obj, "method", function(){
     obj.method();
   });
   assert(spy.called());
   ```
+
+###  To wrap a method call on an existing object with a spy
+
+  ```javascript
+  var spy = Spy.wrap(obj, "method", function(){
+    obj.method();
+  });
+  assert.equal(spy.lastCall().returnValue, obj.method());
+  ```
+
+Note that `stub` does not _pass through_ the method call but _intercepts_ it. 
+It thus acts more like a classical mock than a spy.
+
 
 ## API
 

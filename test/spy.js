@@ -969,8 +969,93 @@ module.exports = {
       
       var actual = spy.calls().select('arguments[0] % 2 == 0').map('returnValue');
       assert.equal(JSON.stringify(actual), JSON.stringify([0,4,16]));
-    }
+    },
     
+    "wrap": {
+      "it should call the spy within the block": function(){
+        var obj = {
+          foo: function(){ return "foo" }
+        }
+        
+        var spy = Spy.wrap(obj, 'foo', function(){
+          obj.foo();
+        });
+        
+        assert(spy.called());
+      },
+      
+      "it should not call the spy outside the block": function(){
+        var obj = {
+          foo: function(){ return "foo" }
+        }
+        
+        var spy = Spy.wrap(obj, 'foo', function(){
+          obj.foo();
+        });
+        
+        assert(spy.calledOnce());              
+        
+        obj.foo();
+        
+        assert(spy.calledOnce());      
+      },
+      
+      "it should pass through to wrapped method": function(){
+        var obj = {
+          foo: function(){ return "foo" }
+        }
+        
+        var actualReturn;
+        var spy = Spy.wrap(obj, 'foo', function(){
+          actualReturn = obj.foo();
+        });
+        
+        assert.equal(actualReturn, "foo");
+        assert.equal(spy.firstCall().returnValue, "foo");
+      }
+    },
+    
+    "stub": {
+      "it should call the spy within the block": function(){
+        var obj = {
+          foo: function(){ return "foo" }
+        }
+        
+        var spy = Spy.stub(obj, 'foo', function(){
+          obj.foo();
+        });
+        
+        assert(spy.called());
+      },
+      
+      "it should not call the spy outside the block": function(){
+        var obj = {
+          foo: function(){ return "foo" }
+        }
+        
+        var spy = Spy.stub(obj, 'foo', function(){
+          obj.foo();
+        });
+        
+        assert(spy.calledOnce());              
+        
+        obj.foo();
+        
+        assert(spy.calledOnce());      
+      },
+      
+      "it should not pass through to stubbed method": function(){
+        var obj = {
+          foo: function(){ return "foo" }
+        }
+        
+        var spy = Spy.stub(obj, 'foo', function(){
+          obj.foo();
+        });
+        
+        assert.equal(spy.firstCall().returnValue, undefined);
+      }      
+    }
     
 }
 
