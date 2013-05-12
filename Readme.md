@@ -58,8 +58,8 @@
   - calledWithExactly(args...)
   - alwaysCalledWithExactly(args...)
   - neverCalledWith(args...)
-  - _threw({null|String|Object})_
-  - _alwaysThrew({null|String|Object})_
+  - threw({null|String|Object})
+  - alwaysThrew({null|String|Object})
   - _returned({Object})_
   - _alwaysReturned({Object})_
   - calledBefore({Spy})

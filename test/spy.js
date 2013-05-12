@@ -501,8 +501,186 @@ module.exports = {
         
     },
     
-  /* threw, alwaysThrew, exceptions omitted */
-  
+    "threw": {
+        beforeEach: function () {
+            this.spy = Spy();
+
+            this.spyWithTypeError = Spy(function () {
+              throw new TypeError();
+            });
+            
+            this.spyWithStringError = Spy(function() {
+              throw "error";
+            });
+        },
+
+        "returns exception thrown by function": function () {
+            var err = new Error();
+
+            var spy = Spy(function () {
+                throw err;
+            });
+
+            try {
+                spy.watch();
+            } catch (e) {}
+
+            assert(spy.threw(err));
+        },
+
+        "returns false if spy did not throw": function () {
+            this.spy.watch();
+
+            assert.equal(this.spy.threw(), false);
+        },
+
+        "returns true if spy threw": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e) {}
+
+            assert(this.spyWithTypeError.threw());
+        },
+
+        "returns true if string type matches": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e) {}
+
+            assert(this.spyWithTypeError.threw("TypeError"));
+        },
+
+        "returns false if string did not match": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e) {}
+
+            assert.equal(this.spyWithTypeError.threw("Error"), false);
+        },
+
+        "returns false if spy did not throw specified error": function () {
+            this.spy.watch();
+
+            assert.equal(this.spy.threw("Error"), false);
+        },
+        
+        "returns true if string matches": function () {
+          try {
+            this.spyWithStringError.watch();
+          } catch (e) {}
+          
+          assert(this.spyWithStringError.threw("error"));
+        },
+        
+        "returns false if strings do not match": function() {
+          try {
+            this.spyWithStringError.watch();
+          } catch (e) {}
+          
+          assert.equal(this.spyWithStringError.threw("not the error"), false);
+        }
+    },
+
+    "alwaysThrew": {
+        beforeEach: function () {
+            this.spy = Spy();
+
+            this.spyWithTypeError = Spy(function () {
+                throw new TypeError();
+            });
+        },
+
+        "returns true when spy threw": function () {
+            var err = new Error();
+
+            var spy = Spy(function () {
+                throw err;
+            });
+
+            try {
+                spy.watch();
+            } catch (e) {}
+
+            assert(spy.alwaysThrew(err));
+        },
+
+        "returns false if spy did not throw": function () {
+            this.spy.watch();
+
+            assert.equal(this.spy.alwaysThrew(), false);
+        },
+
+        "returns true if spy threw": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e) {}
+
+            assert(this.spyWithTypeError.alwaysThrew());
+        },
+
+        "returns true if string type matches": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e) {}
+
+            assert(this.spyWithTypeError.alwaysThrew("TypeError"));
+        },
+
+        "returns false if string did not match": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e) {}
+
+            assert.equal(this.spyWithTypeError.alwaysThrew("Error"), false);
+        },
+
+        "returns false if spy did not throw specified error": function () {
+            this.spy.watch();
+
+            assert.equal(this.spy.alwaysThrew("Error"), false);
+        },
+
+        "returns false if some calls did not throw": function () {
+            var spy = Spy(function () {
+                if (spy.callCount() === 0) {
+                    throw new Error();
+                }
+            });
+
+            try {
+                this.spy.watch();
+            } catch (e) {}
+
+            this.spy.watch();
+
+            assert.equal(this.spy.alwaysThrew(), false);
+        },
+
+        "returns true if all calls threw": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e1) {}
+
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e2) {}
+
+            assert(this.spyWithTypeError.alwaysThrew());
+        },
+
+        "returns true if all calls threw same type": function () {
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e1) {}
+
+            try {
+                this.spyWithTypeError.watch();
+            } catch (e2) {}
+
+            assert(this.spyWithTypeError.alwaysThrew("TypeError"));
+        }
+    },
+    
   /* returned, returnValues omitted */
   
     "calledBefore": {

@@ -125,6 +125,30 @@ Spy.prototype.neverCalledWith = function(){
   return !this.calledWith.apply(this,arguments);
 }
 
+Spy.prototype.threw = function(err){
+  if (!err) {
+    return this.calls().any('exception');
+  } else if (typeof err == 'string') {
+    return this.calls().any('exception == "' + err + '"');
+  } else {
+    return this.calls().any(function(c){
+      return deepEqual(c.exception, err);
+    });
+  }
+}
+
+Spy.prototype.alwaysThrew = function(err){
+  if (!err) {
+    return this.calls().all('exception');
+  } else if (typeof err == 'string') {
+    return this.calls().all('exception == "' + err + '"');
+  } else {
+    return this.calls().all(function(c){
+      return deepEqual(c.exception, err);
+    });
+  }
+}
+
 Spy.prototype.calledBefore = function(other){
   if (!this.called()) return false;
   if (!other.called()) return true;
