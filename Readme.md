@@ -45,7 +45,6 @@
   Only the following inspection methods from sinon.js are built-in
   ( _italics indicates methods not yet implemented_ ):
 
-  <tt>
   - callCount
   - called
   - notCalled
@@ -65,7 +64,6 @@
   - _alwaysReturned({Object})_
   - calledBefore({Spy})
   - calledAfter({Spy})
-  </tt>
 
   Note that `spy.calls()` returns an [enumerable][b], allowing for 
   easily defined custom finders and chaining. For example, to select 
