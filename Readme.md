@@ -23,7 +23,7 @@
   ```javascript
   var spy = Spy(callback);
   someFunctionWithCallback("parameter", spy.watch);
-  assert.equal(spy.lastCall().returnValue, 1);
+  assert.equal(spy.lastCall().returnValue, callback());
   ```
 
 ###  To inject a spy into a method call on an existing object
