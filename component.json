@@ -2,7 +2,7 @@
   "name": "minispy",
   "repo": "ericgj/minispy",
   "description": "Simple test spy, framework agnostic",
-  "version": "0.0.3",
+  "version": "0.1.1",
   "keywords": [],
   "dependencies": {
     "component/enumerable": "*"
