@@ -78,10 +78,10 @@ The following inspection methods from sinon.js are built-in:
 
 Note that `spy.calls()` returns an [enumerable][b], allowing for 
 easily defined custom finders and chaining. For example, to select 
-_"the return values from all spied calls with the first argument > 1"_:
+_"the return values from all spied calls with at least one argument"_:
 
   ```javascript
-  spy.calls().select('arguments[0] > 1').map('returnValue');
+  spy.calls().select('arguments.length > 0').map('returnValue');
   ```
 
 ## License
