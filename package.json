@@ -1,31 +1,10 @@
 {
-  "name": "minispy",
+  "name": "ericgj-minispy",
+  "description": "Simple test spy, framework agnostic",
   "version": "0.1.1",
-  "description": "Simple test spy, framework-agnostic",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "mocha test/spy.js --ui exports"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/ericgj/minispy"
-  },
-  "keywords": [
-    "test",
-    "testing",
-    "spy",
-    "spies"
-  ],
-  "author": "Eric Gjertsen <ericgj72@gmail.com> (https://github.com/ericgj)",
-  "license": "MIT",
+  "keywords": [],
   "dependencies": {
-    "enumerable-component": "*"
+    "component-enumerable": "git://github.com/npmcomponent/component-enumerable.git"
   },
-  "devDependencies": {
-    "mocha": "*",
-    "assert": "*"
-  }
+  "license": "MIT"
 }

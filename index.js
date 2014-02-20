@@ -1,6 +1,6 @@
 var Enum;
 try {
-  Enum = require('enumerable');            // component require
+  Enum = require('component-enumerable');            // component require
 } catch(e) {
   Enum = require('enumerable-component');  // npm require fallback
 }
